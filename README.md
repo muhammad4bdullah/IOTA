@@ -71,6 +71,8 @@ Fileditch says its regular file pages may show Fileditch ads, and direct hotlink
 
    The build deliberately excludes `dashboard/`, scripts, tests, and server configuration from public assets. Keep the `functions/` directory at the repository root so Pages can deploy the API.
 
+   If Cloudflare shows a separate **Deploy command** field, set it to `npm run deploy:pages`. Do not use the default `npx wrangler deploy`: that deploys a Worker, while this project is Cloudflare Pages. If the project was created as a Worker instead of a Pages project, create/connect it under **Workers & Pages → Create application → Pages → Connect to Git**.
+
    You can also deploy manually from PowerShell:
 
    ```powershell
