@@ -85,7 +85,6 @@
     form.elements.description.value=game.description;
     form.elements.coverImage.value=game.coverImage||"";
     form.elements.fileUrl.value=game.fileUrl||"";
-    form.elements.sha256.value=game.sha256||"";
     form.elements.license.value=game.license||"";
     form.elements.rightsConfirmed.checked=Boolean(game.rightsConfirmed);
     form.elements.published.checked=game.published;
@@ -167,7 +166,6 @@
       description:form.elements.description.value.trim(),
       coverImage:form.elements.coverImage.value.trim(),
       fileUrl:form.elements.fileUrl.value.trim(),
-      sha256:form.elements.sha256.value.trim(),
       price:0,
       published:form.elements.published.checked,
       license:form.elements.license.value.trim(),
