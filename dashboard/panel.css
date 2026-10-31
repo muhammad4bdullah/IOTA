@@ -15,7 +15,7 @@
 .dashboard-intro h1{font-size:clamp(36px,5vw,54px);margin:0 0 10px}
 .dashboard-intro .muted{margin:0;max-width:640px;font-size:13px}
 .dashboard-intro .button{flex-shrink:0}
-.dashboard-stats{grid-template-columns:repeat(4,minmax(0,1fr))}
+.dashboard-stats{grid-template-columns:repeat(3,minmax(0,1fr))}
 .dashboard-stats .storage-status{font:600 19px var(--display);color:#e3b764}
 .dashboard-layout{grid-template-columns:180px minmax(0,1fr)}
 .dashboard-note,.upload-hint{font-size:11px;color:var(--muted);margin:14px 0 0}

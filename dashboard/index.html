@@ -38,7 +38,6 @@
         <div>
           <p class="eyebrow">PUBLISHER CONTROL ROOM <span class="demo-tag">FREE DOWNLOADS</span></p>
           <h1>Game dashboard</h1>
-          <p class="muted">Changes publish to the shared catalog. Add Fileditch links only for game builds you own or have explicit permission to distribute.</p>
         </div>
         <button class="button button-primary" id="new-game" type="button">Add a game <i data-lucide="plus"></i></button>
       </section>
@@ -46,8 +45,7 @@
       <section class="admin-stats dashboard-stats" aria-label="Catalog summary">
         <article><span>Total games</span><strong id="stat-games">0</strong><small>In the database</small></article>
         <article><span>Published games</span><strong id="stat-published">0</strong><small>Visible in the storefront</small></article>
-        <article><span>Download requests</span><strong id="stat-downloads">0</strong><small>Redirects sent to Fileditch</small></article>
-        <article><span>Game files</span><strong class="storage-status">Fileditch</strong><small>Links managed by you</small></article>
+        <article><span>Download requests</span><strong id="stat-downloads">0</strong></article>
       </section>
 
       <div class="admin-layout dashboard-layout">
@@ -70,7 +68,6 @@
                 <tbody id="admin-game-rows"></tbody>
               </table>
             </div>
-            <p class="dashboard-note">Download totals count redirects to Fileditch, not confirmed completed transfers.</p>
           </div>
 
           <div class="admin-panel" id="game-form">
@@ -89,7 +86,7 @@
               <label class="full-field">Fileditch file page or hotlink URL<input name="fileUrl" type="url" maxlength="2048" placeholder="https://new.fileditch.com/..." autocomplete="url"></label>
               <p class="upload-hint full-field">Upload on Fileditch and paste the stable share/file page URL, not a temporary signed URL. Without Fileditch Hotlink, make sure the link opens the Fileditch page players need before downloading. Fileditch blocks some executable file types, so check its current upload rules and test your build before publishing.</p>
               <label class="full-field">Rights / permission notes<textarea name="license" rows="2" required maxlength="500" placeholder="I own this build / permission granted by [publisher]"></textarea></label>
-              <label class="check-row full-field"><input type="checkbox" name="rightsConfirmed" required> I own the rights to this game or have explicit permission to distribute this build.</label>
+              <label class="check-row full-field"><input type="checkbox" name="rightsConfirmed" required> I confirm this game build is authorized for distribution.</label>
               <label class="check-row full-field"><input type="checkbox" name="published"> Publish this listing in the public catalog</label>
               <div class="form-actions full-field">
                 <button class="button button-primary" type="submit">Save game</button>
