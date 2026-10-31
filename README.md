@@ -37,7 +37,7 @@ Fileditch says its regular file pages may show Fileditch ads, and direct hotlink
 
    ```powershell
    npx wrangler login
-   npx wrangler pages project create iota-games --production-branch main
+   npx wrangler pages project create iota-xyz --production-branch main
    npm run db:create
    ```
 
@@ -52,8 +52,8 @@ Fileditch says its regular file pages may show Fileditch ads, and direct hotlink
 4. Set the two production secrets. Wrangler prompts for each value:
 
    ```powershell
-   npx wrangler pages secret put ADMIN_PASSWORD --project-name iota-games
-   npx wrangler pages secret put SESSION_SECRET --project-name iota-games
+   npx wrangler pages secret put ADMIN_PASSWORD --project-name iota-xyz
+   npx wrangler pages secret put SESSION_SECRET --project-name iota-xyz
    ```
 
    Use a unique random administrator password and a separate random session secret (at least 32 characters). In PowerShell, generate each value with:
@@ -64,7 +64,7 @@ Fileditch says its regular file pages may show Fileditch ads, and direct hotlink
 
    Save the administrator password securely. Do not send secrets in chat or store them in `wrangler.jsonc`.
 
-5. Connect the GitHub repository to the `iota-games` Cloudflare Pages project. Configure its production branch and set:
+5. Connect the GitHub repository to the `iota-xyz` Cloudflare Pages project. Configure its production branch and set:
 
    - Build command: `npm run build`
    - Build output directory: `dist`
@@ -86,7 +86,7 @@ Fileditch says its regular file pages may show Fileditch ads, and direct hotlink
 The dashboard UI is intentionally excluded from the deployed site. To make changes to the live catalog, start its loopback-only local server and point it at your deployed Pages URL:
 
 ```powershell
-$env:IOTA_API_ORIGIN = "https://iota-games.pages.dev"
+$env:IOTA_API_ORIGIN = "https://iota-xyz.pages.dev"
 npm run admin:local
 ```
 
