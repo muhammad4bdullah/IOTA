@@ -44,7 +44,7 @@
     const query=search.value.trim().toLowerCase();
     const filtered=catalog.filter(game=>game.title.toLowerCase().includes(query)||game.developer.toLowerCase().includes(query));
     rows.innerHTML=filtered.length?filtered.map(game=>`<tr>
-      <td>${escape(game.title)}<small>${escape(game.developer)}${game.hasFile?" · Fileditch link ready":" · No file link"}</small></td>
+      <td>${escape(game.title)}<small>${escape(game.developer)}${game.hasFile?" · Download link ready":" · No file link"}</small></td>
       <td><span class="status ${game.published?"":"unpublished"}">${game.published?"Published":"Unpublished"}</span></td>
       <td>${game.downloadCount}</td>
       <td>${escape(game.releaseDate)}</td>
@@ -91,7 +91,7 @@
     form.elements.published.checked=game.published;
     document.querySelector("#form-heading").textContent=`Edit ${game.title}`;
     document.querySelector("#game-form").scrollIntoView({behavior:"smooth"});
-    message.textContent=game.hasFile?"Current Fileditch link is configured.":"No Fileditch link is configured.";
+    message.textContent=game.hasFile?"A download link is configured.":"No download link is configured.";
   }
 
   loginForm.addEventListener("submit",async event=>{
@@ -138,7 +138,7 @@
       }catch(error){window.alert(error.message)}
       return;
     }
-    if(button.dataset.delete&&window.confirm(`Permanently remove ${game.title} and its Fileditch link from IOTA?`)){
+    if(button.dataset.delete&&window.confirm(`Permanently remove ${game.title} and its download link from IOTA?`)){
       try{
         await api(`/api/admin/games/${encodeURIComponent(game.id)}`,{method:"DELETE"});
         await loadCatalog();
@@ -177,8 +177,8 @@
       await api("/api/admin/games",{method:"POST",body:JSON.stringify(game)});
       await loadCatalog();
       resetForm();
-      message.textContent=game.fileUrl?"Game and Fileditch link saved.":"Game saved. Add an authorized Fileditch link before enabling downloads.";
-      if(old&&old.hasFile&&!game.fileUrl)message.textContent="Game saved, but downloads remain unavailable until you add a Fileditch link.";
+      message.textContent=game.fileUrl?"Game and download link saved.":"Game saved. Add a download link to enable downloads.";
+      if(old&&old.hasFile&&!game.fileUrl)message.textContent="Game saved, but downloads remain unavailable until you add a download link.";
     }catch(error){
       message.textContent=error.message;
     }finally{

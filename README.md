@@ -1,29 +1,29 @@
 # IOTA — free game distribution
 
-IOTA is a game storefront hosted on Cloudflare Pages, with a Pages Functions API, D1 catalog/analytics database, password-protected publisher dashboard, and Fileditch-hosted game downloads. GitHub stores the source code; Cloudflare serves the app; Fileditch stores the installer files. R2 is not used.
+IOTA is a game storefront hosted on Cloudflare Pages, with a Pages Functions API, D1 catalog/analytics database, password-protected publisher dashboard, and externally hosted game downloads. GitHub stores the source code; Cloudflare serves the app; an external file host stores the installer files. R2 is not used.
 
 ## What is and is not ready
 
 - The storefront reads published game listings from D1.
-- The publisher dashboard runs on your computer at `http://127.0.0.1:8765/dashboard/`, with admin login, live catalog editing, Fileditch-link management, and download-request counts. The dashboard files are excluded from the public site build.
-- Upload authorized game builds to Fileditch yourself, then paste the stable Fileditch file-page URL into the dashboard. IOTA redirects players to that page; the Fileditch URL is not exposed in the public catalog API.
-- Download totals count redirects to Fileditch. They cannot prove that a transfer completed.
-- The site has no sample games. Add real information and authorized builds through the dashboard after deployment.
+- The publisher dashboard runs on your computer at `http://127.0.0.1:8765/dashboard/`, with admin login, live catalog editing, external download-link management, and download-request counts. The dashboard files are excluded from the public site build.
+- Upload game builds to your file host, then paste a stable HTTPS download URL into the dashboard. IOTA redirects players to that URL; it is not exposed in the public catalog API.
+- Download totals count redirect requests. They cannot prove that a transfer completed.
+- The site has no sample games. Add real game information and files through the dashboard after deployment.
 - Player accounts and a checkout/payment system are intentionally omitted. Downloads are free.
 - Ad loading is disabled until you are approved by an ad provider and add your public publisher ID to `js/ads-config.js`.
 
 ## Costs and limits
 
-Cloudflare Pages and D1 have free allowances and limits that can change. Fileditch's own plans, retention, ads, and download behavior also apply. Its FAQ currently says files with no access for 45 days may become eligible for deletion when storage needs reclaiming. Keep local backups and check Fileditch's current terms before relying on it as the only copy.
+Cloudflare Pages and D1 have free allowances and limits that can change. Your file host's storage, retention, ads, and download terms also apply. Keep local backups and check its current terms before relying on it as the only copy.
 
-Fileditch says its regular file pages may show Fileditch ads, and direct hotlinking requires its paid Hotlink plan. With a regular Fileditch file-page URL, players follow the link to Fileditch and start the download there. IOTA's own advertising is separate, not enabled by default, and does not guarantee revenue.
+An external file host may show its own ads or require a paid plan for direct download links. IOTA's own advertising is separate, not enabled by default, and does not guarantee revenue.
 
 ## Prerequisites
 
 - Node.js 20 or newer and npm.
 - A Cloudflare account with Pages, Pages Functions, and D1 available.
 - A GitHub account if you want Cloudflare Pages to deploy automatically from your repository.
-- Game builds that you own or have explicit permission to distribute.
+- Game builds that you have the legal right to publish.
 
 ## Deploy the public site
 
@@ -109,16 +109,16 @@ Do not use the local Wrangler development server for production edits: it uses l
 
 Run the unit checks with `npm test`.
 
-## Add a game and link a Fileditch release
+## Add a game and link a hosted release
 
 1. Sign in at `/dashboard/` with `ADMIN_PASSWORD`.
 2. Add the game's accurate metadata and a cover image you have rights to use.
-3. Confirm ownership or explicit distribution permission and enter a note identifying that authorization.
+3. Confirm you have the rights needed to publish the game. Internal notes are optional.
 4. Scan the installer/archive for malware and calculate its SHA-256 checksum if desired.
-5. Upload the installer to Fileditch. Copy its stable share/file URL—not a temporary signed download URL—and paste it into the local IOTA dashboard. Without Fileditch Hotlink, make sure the URL takes players to the Fileditch page needed to start a download. Fileditch currently blocks some executable types (including `.exe` and `.apk`); check its rules before choosing your release archive.
+5. Upload the installer to your file host. Paste a stable HTTPS download URL into the local IOTA dashboard, then test it in a private browser window before publishing. Check the host's supported file types and terms.
 6. Test the link in a private browser window before publishing. Choose whether to publish the listing.
 
-Never upload third-party commercial games without the publisher's written permission. IOTA does not store or scan the installer; keep a backup and verify its checksum independently. Fileditch currently says files untouched for 45+ days can become eligible for deletion when it needs space.
+IOTA does not store or scan the installer; keep a backup and verify its checksum independently.
 
 ## Ads setup
 
@@ -128,7 +128,7 @@ Ads are off by default. First publish original catalog pages, replace the privac
 
 - Admin sessions use an HttpOnly, Secure, SameSite cookie and expire after 12 hours. Failed admin logins are limited per hashed client address.
 - Admin writes require a same-origin request and a signed session.
-- The Fileditch URL is only returned by the authenticated admin API; public downloads pass through an IOTA redirect endpoint.
+- The external download URL is only returned by the authenticated admin API; public downloads pass through an IOTA redirect endpoint.
 - Admin and session secrets stay in Wrangler/Cloudflare secrets, never in the browser bundle.
 - The initial admin is the single configured administrator. There is no public account registration or publisher self-signup.
 - This starter does not include automated malware scanning, email, player accounts, user reviews, a certified consent-management platform, or a paid checkout.

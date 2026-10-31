@@ -70,7 +70,7 @@ async function handleDownload(env, gameId) {
     SELECT id, file_url, rights_confirmed
     FROM games WHERE id = ? AND published = 1
   `).bind(gameId).first();
-  if (!game?.file_url || !game.rights_confirmed) return fail("This game has no authorized download available.", 404);
+  if (!game?.file_url || !game.rights_confirmed) return fail("This game has no download available.", 404);
 
   await env.DB.prepare("INSERT INTO download_events (game_id) VALUES (?)").bind(gameId).run();
   return new Response(null, {
@@ -181,9 +181,9 @@ export async function onRequest({ request, env }) {
     if (message.includes("Request body") || message.includes("Game ") ||
         message.includes("Title,") || message.includes("Add at least") ||
         message.includes("Version or") || message.includes("Publication") ||
-        message.includes("Distribution") || message.includes("Cover image") ||
+        message.includes("Internal notes") || message.includes("Cover image") ||
         message.includes("SHA-256") || message.includes("free games") ||
-        message.includes("Fileditch URL") || message.includes("Fileditch file page") ||
+        message.includes("Download URL") || message.includes("configured download host") ||
         message.includes("Cross-origin")) {
       return fail(message, 400);
     }

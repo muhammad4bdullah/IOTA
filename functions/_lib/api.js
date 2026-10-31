@@ -101,8 +101,9 @@ export function normalizeGame(input) {
   if (!text(input.version, 40) || typeof input.releaseDate !== "string" || !/^\d{4}-\d{2}-\d{2}$/.test(input.releaseDate)) throw new Error("Version or release date is invalid.");
   if (input.price !== 0) throw new Error("This storefront is configured for free games only.");
   if (typeof input.published !== "boolean" || typeof input.rightsConfirmed !== "boolean") throw new Error("Publication and rights confirmation are required.");
-  if (typeof input.license !== "string" || input.license.trim().length < 5 || input.license.trim().length > 500) throw new Error("Distribution authorization details must be at least 5 characters.");
-  if (!input.rightsConfirmed) throw new Error("Confirm you have permission to publish and distribute this game.");
+  const license = input.license === undefined ? "" : input.license;
+  if (typeof license !== "string" || license.trim().length > 500) throw new Error("Internal notes must be 500 characters or fewer.");
+  if (!input.rightsConfirmed) throw new Error("Confirm you have the rights needed to publish this game.");
 
   let coverImage = "";
   if (input.coverImage) {
@@ -118,7 +119,7 @@ export function normalizeGame(input) {
 
   const sha256 = input.sha256 || "";
   if (sha256 && !/^[a-f0-9]{64}$/i.test(sha256)) throw new Error("SHA-256 must contain exactly 64 hexadecimal characters.");
-  const fileUrl = normalizeFileditchUrl(input.fileUrl || "");
+  const fileUrl = normalizeExternalFileUrl(input.fileUrl || "");
 
   return {
     id: input.id,
@@ -133,32 +134,32 @@ export function normalizeGame(input) {
     coverImage,
     fileUrl,
     published: input.published,
-    license: input.license.trim(),
+    license: license.trim(),
     rightsConfirmed: input.rightsConfirmed,
     sha256: sha256.toLowerCase()
   };
 }
 
-export function normalizeFileditchUrl(value) {
+export function normalizeExternalFileUrl(value) {
   if (value === "") return "";
-  if (typeof value !== "string" || value.length > 2_048) throw new Error("Fileditch URL is invalid.");
+  if (typeof value !== "string" || value.length > 2_048) throw new Error("Download URL is invalid.");
 
   let url;
   try {
     url = new URL(value);
   } catch {
-    throw new Error("Fileditch URL must be a valid HTTPS link.");
+    throw new Error("Download URL must be a valid HTTPS link.");
   }
 
   const hostname = url.hostname.toLowerCase();
-  const isFileditchHost = hostname === "fileditch.com" ||
+  const isSupportedHost = hostname === "fileditch.com" ||
     hostname.endsWith(".fileditch.com") ||
     hostname === "fileditchhot.st" ||
     hostname === "itsfileditchfiles.st" ||
     hostname === "fileditchfiles.st" ||
     hostname === "fileditchvids.st";
-  if (url.protocol !== "https:" || !isFileditchHost || url.username || url.password || url.port) {
-    throw new Error("Use a secure Fileditch file page URL or Fileditch hotlink.");
+  if (url.protocol !== "https:" || !isSupportedHost || url.username || url.password || url.port) {
+    throw new Error("Use a secure link from the configured download host.");
   }
   return url.href;
 }
@@ -174,7 +175,7 @@ export function mapGame(row, admin = false) {
     platforms: JSON.parse(row.platforms),
     version: row.version,
     releaseDate: row.release_date,
-    fileSizeLabel: row.file_url ? "Fileditch" : "Not uploaded",
+    fileSizeLabel: row.file_url ? "External host" : "Not uploaded",
     coverImage: row.cover_image || "",
     price: 0,
     rating: 0,

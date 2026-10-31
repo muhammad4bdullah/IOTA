@@ -4,7 +4,7 @@ import {
   createSession,
   isAdmin,
   mapGame,
-  normalizeFileditchUrl,
+  normalizeExternalFileUrl,
   normalizeGame
 } from "../functions/_lib/api.js";
 
@@ -20,7 +20,7 @@ const validGame = {
   coverImage: "https://example.com/cover.jpg",
   published: false,
   price: 0,
-  license: "Owned by my studio.",
+  license: "",
   rightsConfirmed: true
 };
 
@@ -33,7 +33,7 @@ test("validates free game listings and normalizes user-provided text", () => {
 
 test("rejects paid games and listings without rights confirmation", () => {
   assert.throws(() => normalizeGame({ ...validGame, price: 1 }), /free games only/);
-  assert.throws(() => normalizeGame({ ...validGame, rightsConfirmed: false }), /Confirm you have permission/);
+  assert.throws(() => normalizeGame({ ...validGame, rightsConfirmed: false }), /Confirm you have the rights needed/);
 });
 
 test("rejects insecure cover URLs and malformed checksums", () => {
@@ -41,14 +41,14 @@ test("rejects insecure cover URLs and malformed checksums", () => {
   assert.throws(() => normalizeGame({ ...validGame, sha256: "bad" }), /64 hexadecimal/);
 });
 
-test("accepts HTTPS Fileditch file-page and hotlink URLs only", () => {
-  assert.equal(normalizeFileditchUrl("https://new.fileditch.com/file/abc"), "https://new.fileditch.com/file/abc");
-  assert.equal(normalizeFileditchUrl("https://fileditchhot.st/abc"), "https://fileditchhot.st/abc");
-  assert.equal(normalizeFileditchUrl("https://itsfileditchfiles.st/abc/game.zip"), "https://itsfileditchfiles.st/abc/game.zip");
+test("accepts supported HTTPS download links and rejects other hosts", () => {
+  assert.equal(normalizeExternalFileUrl("https://new.fileditch.com/file/abc"), "https://new.fileditch.com/file/abc");
+  assert.equal(normalizeExternalFileUrl("https://fileditchhot.st/abc"), "https://fileditchhot.st/abc");
+  assert.equal(normalizeExternalFileUrl("https://itsfileditchfiles.st/abc/game.zip"), "https://itsfileditchfiles.st/abc/game.zip");
   assert.equal(normalizeGame({ ...validGame, fileUrl: "https://new.fileditch.com/file/abc" }).fileUrl, "https://new.fileditch.com/file/abc");
-  assert.throws(() => normalizeFileditchUrl("http://fileditch.com/file/abc"), /secure Fileditch/);
-  assert.throws(() => normalizeFileditchUrl("https://fileditch.com.example.org/file/abc"), /secure Fileditch/);
-  assert.throws(() => normalizeFileditchUrl("https://example.org/file/abc"), /secure Fileditch/);
+  assert.throws(() => normalizeExternalFileUrl("http://fileditch.com/file/abc"), /secure link from the configured/);
+  assert.throws(() => normalizeExternalFileUrl("https://fileditch.com.example.org/file/abc"), /secure link from the configured/);
+  assert.throws(() => normalizeExternalFileUrl("https://example.org/file/abc"), /secure link from the configured/);
 });
 
 test("maps external file links without exposing them in public catalog data", () => {
@@ -61,7 +61,7 @@ test("maps external file links without exposing them in public catalog data", ()
   const publicGame = mapGame(row);
   const adminGame = mapGame(row, true);
   assert.equal(publicGame.hasFile, true);
-  assert.equal(publicGame.fileSizeLabel, "Fileditch");
+  assert.equal(publicGame.fileSizeLabel, "External host");
   assert.equal(publicGame.downloadCount, 7);
   assert.equal("fileUrl" in publicGame, false);
   assert.equal(adminGame.license, "Owned");
