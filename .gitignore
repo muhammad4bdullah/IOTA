@@ -6,3 +6,4 @@ _worker.bundle
 .env
 .env.*
 !.env.example
+/passwords dashboard
