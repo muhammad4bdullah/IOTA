@@ -1,0 +1,9 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://iota-xyz.pages.dev/sitemap.xml
+
+# Disallow admin/dashboard paths from being indexed
+Disallow: /dashboard/
+Disallow: /admin.html
+Disallow: /forgot-password.html
