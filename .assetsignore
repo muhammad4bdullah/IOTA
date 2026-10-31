@@ -1,0 +1,10 @@
+wrangler.jsonc
+package.json
+package-lock.json
+migrations/
+tests/
+scripts/
+.dev.vars
+.dev.vars.example
+.gitignore
+.assetsignore

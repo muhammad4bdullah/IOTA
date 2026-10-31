@@ -1,0 +1,118 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#0b0d0f">
+  <title>Publisher dashboard — IOTA</title>
+  <link rel="stylesheet" href="../css/global.css">
+  <link rel="stylesheet" href="../css/components.css">
+  <link rel="stylesheet" href="../css/admin.css">
+  <link rel="stylesheet" href="dashboard.css">
+  <link rel="stylesheet" href="panel.css">
+  <script defer src="https://unpkg.com/lucide@latest"></script>
+  <script defer src="../js/admin.js"></script>
+</head>
+<body>
+  <header class="dashboard-header">
+    <div class="shell dashboard-header-inner">
+      <a class="brand" href="/" aria-label="IOTA home"><span class="brand-mark">I</span>IOTA</a>
+      <nav aria-label="Dashboard navigation"><a href="/">View storefront</a></nav>
+      <button class="button button-quiet" id="admin-logout" type="button" hidden>Sign out</button>
+    </div>
+  </header>
+
+  <main class="shell page-main dashboard-main">
+    <section class="admin-panel login-panel" id="login-panel">
+      <p class="eyebrow">PUBLISHER ACCESS</p>
+      <h1>Sign in to your dashboard</h1>
+      <p class="muted">Only the site administrator can add and manage game listings.</p>
+      <form id="admin-login" class="admin-form login-form">
+        <label class="full-field">Admin password<input name="password" type="password" autocomplete="current-password" required></label>
+        <div class="form-actions full-field"><button class="button button-primary" type="submit">Sign in</button><span class="form-message" aria-live="polite"></span></div>
+      </form>
+    </section>
+
+    <div id="dashboard-shell" hidden>
+      <section class="dashboard-intro" id="overview">
+        <div>
+          <p class="eyebrow">PUBLISHER CONTROL ROOM <span class="demo-tag">FREE DOWNLOADS</span></p>
+          <h1>Game dashboard</h1>
+          <p class="muted">Changes publish to the shared catalog. Add Fileditch links only for game builds you own or have explicit permission to distribute.</p>
+        </div>
+        <button class="button button-primary" id="new-game" type="button">Add a game <i data-lucide="plus"></i></button>
+      </section>
+
+      <section class="admin-stats dashboard-stats" aria-label="Catalog summary">
+        <article><span>Total games</span><strong id="stat-games">0</strong><small>In the database</small></article>
+        <article><span>Published games</span><strong id="stat-published">0</strong><small>Visible in the storefront</small></article>
+        <article><span>Download requests</span><strong id="stat-downloads">0</strong><small>Redirects sent to Fileditch</small></article>
+        <article><span>Game files</span><strong class="storage-status">Fileditch</strong><small>Links managed by you</small></article>
+      </section>
+
+      <div class="admin-layout dashboard-layout">
+        <aside class="admin-nav" aria-label="Dashboard sections">
+          <a class="active" href="#overview"><i data-lucide="layout-dashboard"></i> Overview</a>
+          <a href="#game-manager"><i data-lucide="gamepad-2"></i> Games</a>
+          <a href="#game-form"><i data-lucide="plus-circle"></i> Add a game</a>
+          <a href="#hosting-info"><i data-lucide="cloud"></i> Setup & limits</a>
+        </aside>
+
+        <section class="admin-content">
+          <div class="admin-panel" id="game-manager">
+            <div class="panel-heading">
+              <div><p class="eyebrow">LIVE CATALOG</p><h2>Games</h2></div>
+              <input id="admin-search" type="search" placeholder="Search games" aria-label="Search games">
+            </div>
+            <div class="table-scroll">
+              <table>
+                <thead><tr><th>Game</th><th>Status</th><th>Downloads</th><th>Release</th><th>Actions</th></tr></thead>
+                <tbody id="admin-game-rows"></tbody>
+              </table>
+            </div>
+            <p class="dashboard-note">Download totals count redirects to Fileditch, not confirmed completed transfers.</p>
+          </div>
+
+          <div class="admin-panel" id="game-form">
+            <div class="panel-heading"><div><p class="eyebrow">CATALOG EDITOR</p><h2 id="form-heading">Add a game</h2></div></div>
+            <form id="admin-form" class="admin-form">
+              <input type="hidden" name="id">
+              <label>Game title<input name="title" required maxlength="80"></label>
+              <label>Developer / publisher<input name="developer" required maxlength="80"></label>
+              <label>Genres, comma separated<input name="genre" required placeholder="Action, Indie"></label>
+              <label>Platforms, comma separated<input name="platforms" required placeholder="Windows, Linux"></label>
+              <label>Release date<input type="date" name="releaseDate" required></label>
+              <label>Version<input name="version" required maxlength="40" value="1.0.0"></label>
+              <label class="full-field">Description<textarea name="description" rows="3" required maxlength="400"></textarea></label>
+              <label class="full-field">Cover image URL<input name="coverImage" type="url" placeholder="Optional HTTPS image URL"></label>
+              <label class="full-field">SHA-256 checksum<input name="sha256" inputmode="text" pattern="[a-fA-F0-9]{64}" maxlength="64" placeholder="Optional: 64 hexadecimal characters"></label>
+              <label class="full-field">Fileditch file page or hotlink URL<input name="fileUrl" type="url" maxlength="2048" placeholder="https://new.fileditch.com/..." autocomplete="url"></label>
+              <p class="upload-hint full-field">Upload on Fileditch and paste the stable share/file page URL, not a temporary signed URL. Without Fileditch Hotlink, make sure the link opens the Fileditch page players need before downloading. Fileditch blocks some executable file types, so check its current upload rules and test your build before publishing.</p>
+              <label class="full-field">Rights / permission notes<textarea name="license" rows="2" required maxlength="500" placeholder="I own this build / permission granted by [publisher]"></textarea></label>
+              <label class="check-row full-field"><input type="checkbox" name="rightsConfirmed" required> I own the rights to this game or have explicit permission to distribute this build.</label>
+              <label class="check-row full-field"><input type="checkbox" name="published"> Publish this listing in the public catalog</label>
+              <div class="form-actions full-field">
+                <button class="button button-primary" type="submit">Save game</button>
+                <button class="button button-quiet" type="button" id="cancel-edit">Cancel</button>
+                <progress id="upload-progress" max="100" value="0" hidden></progress>
+                <span class="form-message" aria-live="polite"></span>
+              </div>
+            </form>
+          </div>
+
+          <div class="admin-panel hosting-panel" id="hosting-info">
+            <p class="eyebrow">OPERATING NOTES</p>
+            <h2>Fileditch links + free downloads</h2>
+            <ol>
+              <li>Fileditch hosts the installer files; Cloudflare Pages and D1 host the IOTA site, catalog, and download-request counts. No R2 bucket is needed.</li>
+              <li>Fileditch says files with no access for 45 days may become eligible for deletion when storage needs reclaiming. Check its current terms and keep backups.</li>
+              <li>Fileditch may show its own ads on regular file pages. IOTA ads are separate and should only be enabled after your ad provider approves the site and required privacy/consent setup is complete.</li>
+            </ol>
+            <a class="text-link" href="../README.md">Deployment guide <i data-lucide="arrow-up-right"></i></a>
+          </div>
+        </section>
+      </div>
+    </div>
+  </main>
+</body>
+</html>

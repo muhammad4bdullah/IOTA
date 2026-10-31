@@ -1,0 +1,13 @@
+.game-art-fallback{height:100%;min-height:120px;display:grid;place-items:center;background:radial-gradient(ellipse at 70% 25%,#a3e63535,transparent 35%),linear-gradient(135deg,#182324,#101418 58%,#253329);color:#d8e7c0;font:600 13px var(--display);letter-spacing:.08em;text-transform:uppercase}
+.game-hero-image[src=""]{display:none}
+.download-disabled{opacity:.55;pointer-events:none}
+.download-meta strong{max-width:65%;overflow-wrap:anywhere;text-align:right}
+.game-sub{line-height:1.5}
+.nav-browse{min-height:38px;padding-inline:13px;font-size:11px}
+.site-footer .footer-links a{white-space:nowrap}
+.legal-copy{max-width:800px}
+.legal-copy h1{font-size:clamp(36px,5vw,56px)}
+.legal-copy h2{font-size:23px;margin-top:30px}
+.legal-copy p,.legal-copy li{color:var(--muted);font-size:14px;line-height:1.8}
+.legal-notice{padding:16px;margin:20px 0;background:#1b2117;border:1px solid #354326;border-radius:8px;color:#c9e6a0;font-size:13px;line-height:1.6}
+@media(max-width:650px){.nav-browse{padding-inline:10px;font-size:10px}}

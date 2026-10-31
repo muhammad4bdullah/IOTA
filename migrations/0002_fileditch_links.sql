@@ -1,0 +1,1 @@
+ALTER TABLE games ADD COLUMN file_url TEXT;
