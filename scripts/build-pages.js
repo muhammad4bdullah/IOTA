@@ -23,7 +23,8 @@ const excludedFiles = new Set([
   "package-lock.json",
   "package.json",
   "README.md",
-  "wrangler.jsonc"
+  "wrangler.jsonc",
+  "passwords dashboard"
 ]);
 
 async function copyPublicFiles(source, destination) {

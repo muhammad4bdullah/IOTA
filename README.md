@@ -2,6 +2,10 @@
 
 IOTA is a game storefront hosted on Cloudflare Pages, with a Pages Functions API, D1 catalog/analytics database, password-protected publisher dashboard, and externally hosted game downloads. GitHub stores the source code; Cloudflare serves the app; an external file host stores the installer files. R2 is not used.
 
+## Project status
+
+IOTA is an independent project built by a small group of 2–3 people; it is not operated by a company and is not yet ready for public launch. Advertising is enabled through the Monetag network (see "Ads setup"). The catalog, legal pages, and ad consent are still being finalized.
+
 ## What is and is not ready
 
 - The storefront reads published game listings from D1.
@@ -122,7 +126,7 @@ IOTA does not store or scan the installer; keep a backup and verify its checksum
 
 ## Ads setup
 
-Ads are off by default. First publish original catalog pages, replace the privacy/terms starter outlines with accurate operator and data-use details, and get approval from an ad network. For AdSense, update `window.IOTA_AD_CLIENT` in `js/ads-config.js` to your approved `ca-pub-...` ID and enable the desired ad format in your provider account. Publish the exact `ads.txt` record supplied by the provider. Add a certified consent-management platform before serving ads to visitors in regions where it is required. Do not click your own ads, incentivize ad clicks, or promise earnings.
+IOTA displays advertising through the Monetag network. Public pages load Monetag scripts (`nap5k.com`, `quge5.com`) and register a Monetag service worker via `sw.js`. Before going live, add a certified consent-management platform where required by law, complete the privacy/terms pages with accurate ad-provider details, and publish the provider's `ads.txt` record. Do not click your own ads, incentivize ad clicks, or promise earnings. If you switch providers later, update the scripts and the `sw.js` service worker accordingly.
 
 ## Security notes
 
