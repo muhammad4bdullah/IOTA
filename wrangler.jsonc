@@ -10,5 +10,11 @@
       "database_id": "37c08f15-0625-4a1a-a4cc-36b961be56af",
       "migrations_dir": "migrations"
     }
+  ],
+  "r2_buckets": [
+    {
+      "binding": "GAMES",
+      "bucket_name": "iota-games-files"
+    }
   ]
 }

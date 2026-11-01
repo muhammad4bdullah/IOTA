@@ -98,7 +98,8 @@ export function normalizeGame(input) {
   if (!input || typeof input !== "object" || !safeId(input.id)) throw new Error("Game ID is invalid.");
   if (!text(input.title, 80) || !text(input.developer, 80) || !text(input.description, 400)) throw new Error("Title, developer, or description is invalid.");
   if (!list(input.genre) || !list(input.platforms)) throw new Error("Add at least one valid genre and platform.");
-  if (!text(input.version, 40) || typeof input.releaseDate !== "string" || !/^\d{4}-\d{2}-\d{2}$/.test(input.releaseDate)) throw new Error("Version or release date is invalid.");
+  if (!text(input.version, 40)) throw new Error("Version is invalid.");
+  if (input.releaseDate !== undefined && (typeof input.releaseDate !== "string" || !/^\d{4}-\d{2}-\d{2}$/.test(input.releaseDate))) throw new Error("Release date must be a YYYY-MM-DD string.");
   if (input.price !== 0) throw new Error("This storefront is configured for free games only.");
   if (typeof input.published !== "boolean" || typeof input.rightsConfirmed !== "boolean") throw new Error("Publication and rights confirmation are required.");
   const license = input.license === undefined ? "" : input.license;
@@ -129,7 +130,7 @@ export function normalizeGame(input) {
     genre: input.genre.map(value => value.trim()),
     platforms: input.platforms.map(value => value.trim()),
     version: input.version.trim(),
-    releaseDate: input.releaseDate,
+    releaseDate: input.releaseDate || "",
     price: 0,
     coverImage,
     fileUrl,

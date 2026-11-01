@@ -47,13 +47,13 @@
       <td>${escape(game.title)}<small>${escape(game.developer)}${game.hasFile?" · Download link ready":" · No file link"}</small></td>
       <td><span class="status ${game.published?"":"unpublished"}">${game.published?"Published":"Unpublished"}</span></td>
       <td>${game.downloadCount}</td>
-      <td>${escape(game.releaseDate)}</td>
+
       <td><div class="table-actions">
         <button type="button" data-edit="${escape(game.id)}">Edit</button>
         <button type="button" data-toggle="${escape(game.id)}">${game.published?"Unpublish":"Publish"}</button>
         <button type="button" data-delete="${escape(game.id)}">Remove</button>
       </div></td>
-    </tr>`).join(""):'<tr><td colspan="5" class="muted">No games yet. Add a listing to get started.</td></tr>';
+    </tr>`).join(""):'<tr><td colspan="4" class="muted">No games yet. Add a listing to get started.</td></tr>';
     document.querySelector("#stat-games").textContent=String(catalog.length);
     document.querySelector("#stat-published").textContent=String(catalog.filter(game=>game.published).length);
     document.querySelector("#stat-downloads").textContent=String(catalog.reduce((sum,game)=>sum+game.downloadCount,0));
@@ -80,7 +80,7 @@
     form.elements.developer.value=game.developer;
     form.elements.genre.value=game.genre.join(", ");
     form.elements.platforms.value=game.platforms.join(", ");
-    form.elements.releaseDate.value=game.releaseDate;
+
     form.elements.version.value=game.version;
     form.elements.description.value=game.description;
     form.elements.coverImage.value=game.coverImage||"";
@@ -161,7 +161,7 @@
       developer:form.elements.developer.value.trim(),
       genre:form.elements.genre.value.split(",").map(value=>value.trim()).filter(Boolean),
       platforms:form.elements.platforms.value.split(",").map(value=>value.trim()).filter(Boolean),
-      releaseDate:form.elements.releaseDate.value,
+
       version:form.elements.version.value.trim(),
       description:form.elements.description.value.trim(),
       coverImage:form.elements.coverImage.value.trim(),

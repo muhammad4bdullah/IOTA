@@ -140,3 +140,57 @@ IOTA displays advertising through the Monetag network. Public pages load Monetag
 ## Legal / privacy launch checklist
 
 Customize `privacy.html` and `terms.html`, publish a real support/privacy contact, review the rules for the countries and age groups you serve, and confirm publisher rights before launch. The included pages are outlines, not legal advice. Advertising-provider acceptance and revenue are not guaranteed.
+
+## Uploading game files
+
+The site provides an admin-authenticated upload endpoint that stores files in Cloudflare R2 and returns a download URL you can attach to a game (instead of using an external file host).
+
+- **Endpoint:** `POST /api/admin/upload`
+- **Auth:** same `iota_admin` session cookie as the other admin APIs (login via `/api/admin/login` first). Must include an `Origin` header matching the site.
+- **Body:** raw file bytes (`application/octet-stream`).
+- **Headers:** `X-File-Name` (filename; sanitized server-side), `Content-Type`, and optional `X-Sha256` (64-hex SHA-256 of the file, stored for integrity checks; the server does not compute it itself because it streams).
+- **Response (201):** `{ url, key, filename, size, sha256, contentType }`. Use `url` (relative, e.g. `/api/files/...`) as the game's download link.
+- **Public download route:** `GET /api/files/<key>`. This is intentionally unauthenticated so players can download without signing in; keys are unguessable UUIDs. Files are always served as `application/octet-stream` with `Content-Disposition: attachment` (never rendered inline) to prevent stored XSS.
+
+### Setup
+
+1. Create the R2 bucket: `npx wrangler r2 bucket create iota-games-files`
+2. Deploy (`npm run deploy`). The `GAMES` R2 binding is configured in `wrangler.jsonc`.
+
+### Limits
+
+- Max 200 MB per upload, **streamed** server-side to R2 in ~5 MB parts via a multipart upload — memory-safe (the Worker never buffers the whole file, so a 200 MB upload cannot crash it). Larger archives can be supported later by raising the cap or adding multi-request uploads.
+- Allowed extensions: **.zip, .7z, .rar, .tar, .gz, .tgz, .exe, .msi, .dmg, .appimage, .deb, .rpm, .pdf, .txt**. Browser-executable types (.html, .js, .svg, etc.) are rejected.
+- Only signed-in admins can upload; requests are same-origin checked.
+
+### Automation example (Node.js)
+
+```js
+import { readFile } from "node:fs/promises";
+
+const ORIGIN = "https://iota-xyz.pages.dev";
+
+// 1. Login -> capture the session cookie
+const login = await fetch(`${ORIGIN}/api/admin/login`, {
+  method: "POST",
+  headers: { "Content-Type": "application/json", Origin: ORIGIN },
+  body: JSON.stringify({ password: process.env.ADMIN_PASSWORD })
+});
+const cookie = login.headers.get("set-cookie").split(";")[0]; // iota_admin=...
+
+// 2. Upload the file bytes
+const bytes = await readFile("path/to/game.zip");
+const up = await fetch(`${ORIGIN}/api/admin/upload`, {
+  method: "POST",
+  headers: {
+    Origin: ORIGIN,
+    Cookie: cookie,
+    "Content-Type": "application/octet-stream",
+    "X-File-Name": "game.zip"
+  },
+  body: bytes
+});
+
+const { url } = await up.json();
+console.log(url); // e.g. "/api/files/uploads/<uuid>.zip"
+```
