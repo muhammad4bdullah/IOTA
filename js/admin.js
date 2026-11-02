@@ -137,7 +137,7 @@
       }catch(error){window.alert(error.message)}
       return;
     }
-    if(button.dataset.delete&&window.confirm(`Permanently remove ${game.title} and its download link from IOTA?`)){
+    if(button.dataset.delete&&window.confirm(`Permanently remove ${game.title} and its download link from Igames?`)){
       try{
         await api(`/api/admin/games/${encodeURIComponent(game.id)}`,{method:"DELETE"});
         await loadCatalog();
